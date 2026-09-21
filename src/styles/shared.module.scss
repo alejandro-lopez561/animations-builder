@@ -5,6 +5,14 @@
   font-weight: 700;
   font-size: 0.85rem;
   cursor: pointer;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  &:hover,
+  &:focus-visible {
+    opacity: 0.8;
+  }
 }
 
 .field {
