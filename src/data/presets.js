@@ -1,4 +1,20 @@
+import { advancedPresets } from './motions.js'
+
+export const customPreset = {
+  name: '', 
+  fromX: 0, 
+  fromY: 0, 
+  scaleFrom: 0, 
+  rotateFrom: 0,
+  opacityFrom: 0, 
+  duration: 0, 
+  easing: 'linear', 
+  overshoot: 0, 
+  delay: 0,
+}
+
 export const presets = {
+  ...advancedPresets,
   "Slide + Bounce": {
     name: "slideBounce",
     fromX: -300,
@@ -245,8 +261,6 @@ export const presets = {
     overshoot: 15,
     delay: 0
   },
-
-  // === EFECTOS ESPECIALES ===
   'Bounce In': {
     name: 'bounceIn',
     fromX: 0,

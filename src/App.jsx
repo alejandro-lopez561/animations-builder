@@ -1,50 +1,18 @@
-import BuilderPanel from "./components/BuilderPanel/BuilderPanel"
-
-import PreviewStage from "./components/PreviewStage/PreviewStage"
-
-import CssOutput from "./components/CssOutput/CssOutput"
-
-import {useAnimationBuilder} from "./hooks/useAnimationBuilder"
+import BuilderPanel from './components/BuilderPanel/BuilderPanel'
+import PreviewStage from './components/PreviewStage/PreviewStage'
+import CssOutput from './components/CssOutput/CssOutput'
+import { useAnimationBuilder } from './hooks/useAnimationBuilder'
+import styles from './App.module.scss'
 
 export default function App() {
-
-  const {
-    config,
-    update,
-    playKey,
-    replay,
-    generatedCSS,
-    keyframes,
-    setConfig,
-  } = useAnimationBuilder()
-
-  return (
-    <div className="app">
-      <div className="app-container">
-        <div className="builder-layout">
-          <BuilderPanel
-            config={config}
-            update={update}
-            replay={replay}
-            setConfig={setConfig}
-          />
-        </div>
-
-        <style>
-          {keyframes}
-        </style>
-
-        <div className="workspace">
-          <PreviewStage
-            config={config}
-            playKey={playKey}
-          />
-
-          <CssOutput
-            generatedCSS={generatedCSS}
-          />
-        </div>
+  const builder = useAnimationBuilder()
+  return <main className={styles.app}>
+    <div className={styles.layout}>
+      <div className={styles.editor} role="region" aria-label="Animation editor" tabIndex={0}><BuilderPanel {...builder} /></div>
+      <div className={styles.workspace}>
+        <PreviewStage key={builder.playKey} scene={builder.scene} replay={builder.replay} />
       </div>
     </div>
-  )
+    <div className={styles.export}><CssOutput css={builder.css} exports={builder.exports} error={builder.error} /></div>
+  </main>
 }

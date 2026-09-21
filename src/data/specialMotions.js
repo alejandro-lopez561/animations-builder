@@ -1,0 +1,23 @@
+const f = (at, values = {}) => ({ at, ...values })
+export const specialMotions = {
+  drawLine: { label: 'SVG Line Draw', category: 'SVG drawing', elementType: 'svg', variant: 'line', target: 'stroke', frames: [f(0,{dash:100}), f(100,{dash:0})] },
+  drawRing: { label: 'SVG Ring Draw', category: 'SVG drawing', elementType: 'svg', variant: 'ring', target: 'stroke', frames: [f(0,{dash:100,rotate:-90}), f(100,{dash:0,rotate:-90})] },
+  drawCheck: { label: 'SVG Check Draw', category: 'SVG drawing', elementType: 'svg', variant: 'check', target: 'stroke', frames: [f(0,{dash:100}), f(35,{dash:75}), f(100,{dash:0})] },
+  drawCurve: { label: 'SVG Curve Draw', category: 'SVG drawing', elementType: 'svg', variant: 'curve', target: 'stroke', frames: [f(0,{dash:100,opacity:.3}), f(100,{dash:0})] },
+  barLeft: { label: 'Bar Grow From Left', category: 'Bars', elementType: 'bars', target: 'parts', origin:'left center', frames:[f(0,{sx:0}), f(100)] },
+  barUp: { label: 'Bar Grow Up', category: 'Bars', elementType: 'bars', variant:'vertical', target:'parts', origin:'center bottom', frames:[f(0,{sy:0}), f(100)] },
+  barCenter: { label: 'Bar Expand From Center', category: 'Bars', elementType:'bars', target:'parts', origin:'center center', frames:[f(0,{sx:0,opacity:0}),f(100)] },
+  barCascade: { label:'Bars Cascade',category:'Bars',elementType:'bars',target:'parts',stagger:160,origin:'left center',frames:[f(0,{sx:0}),f(70,{sx:1.04}),f(100)] },
+  wordRise: {label:'Words Rise',category:'Segmented text',elementType:'segmented',variant:'words',target:'parts',stagger:90,frames:[f(0,{y:30,opacity:0}),f(100)]},
+  wordFocus: {label:'Words Focus',category:'Segmented text',elementType:'segmented',variant:'words',target:'parts',stagger:110,frames:[f(0,{blur:10,scale:.9,opacity:0}),f(100)]},
+  lineReveal: {label:'Lines Reveal',category:'Segmented text',elementType:'segmented',variant:'lines',target:'parts',stagger:180,frames:[f(0,{clip:'inset(0 100% 0 0)'}),f(100,{clip:'inset(0 0% 0 0)'})]},
+  letterWave: {label:'Letters Wave',category:'Segmented text',elementType:'segmented',variant:'letters',target:'parts',stagger:35,frames:[f(0,{y:18,opacity:0}),f(60,{y:-6}),f(100)]},
+  gradientX: {label:'Gradient Horizontal',category:'Animated backgrounds',elementType:'gradient',target:'self',duration:3000,frames:[f(0,{bg:'0% 50%'}),f(50,{bg:'100% 50%'}),f(100,{bg:'0% 50%'})]},
+  gradientY: {label:'Gradient Vertical',category:'Animated backgrounds',elementType:'gradient',target:'self',duration:3000,frames:[f(0,{bg:'50% 0%'}),f(50,{bg:'50% 100%'}),f(100,{bg:'50% 0%'})]},
+  gradientDiagonal: {label:'Gradient Diagonal',category:'Animated backgrounds',elementType:'gradient',target:'self',duration:3200,frames:[f(0,{bg:'0% 0%'}),f(50,{bg:'100% 100%',scale:1.03}),f(100,{bg:'0% 0%'})]},
+  shimmer: {label:'Background Shimmer',category:'Animated backgrounds',elementType:'gradient',target:'self',duration:2000,frames:[f(0,{bg:'100% 50%'}),f(100,{bg:'0% 50%'})]},
+  sequenceRise: {label:'Sequence Rise',category:'Group sequences',elementType:'sequence',target:'parts',stagger:150,frames:[f(0,{y:40,opacity:0}),f(100)]},
+  sequenceReverse: {label:'Sequence Reverse',category:'Group sequences',elementType:'sequence',target:'parts',stagger:180,reverseOrder:true,frames:[f(0,{x:35,opacity:0}),f(100)]},
+  sequenceTilt: {label:'Sequence Tilt',category:'Group sequences',elementType:'sequence',target:'parts',stagger:130,frames:[f(0,{ry:-45,scale:.85,opacity:0}),f(100)]},
+  sequencePop: {label:'Sequence Spring',category:'Group sequences',elementType:'sequence',target:'parts',stagger:170,frames:[f(0,{scale:.3,opacity:0}),f(55,{scale:1.12}),f(78,{scale:.96}),f(100)]},
+}
