@@ -1,27 +1,14 @@
-.preview_card {
-  background: white;
-  border-radius: 24px;
-  padding: 40px 10px;
-  min-height: 420px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  z-index: 1;
-}
-
 .preview_content {
   font-size: 3rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
   text-align: center;
   line-height: 1.1;
 }
 
 .card {
-  background: white;
-  border-radius: 24px;
+  background: var(--surface);
+  border-radius: 14px;
   padding: 24px;
   min-width: 0;
   h2 {
@@ -29,16 +16,16 @@
   }
   p {
     font-size: 0.875rem;
-    color: #526071;
+    color: var(--muted);
   }
 }
 
 .viewport {
   height: 420px;
   overflow: auto;
-  border: 1px solid #dce1e8;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  background: #fafbfc;
+  background: var(--surface-muted);
 }
 
 .spacer {
@@ -48,7 +35,7 @@
   display: flex;
   justify-content: center;
   padding-top: 80px;
-  color: #526071;
+  color: var(--muted);
 }
 
 .target {
@@ -62,10 +49,6 @@
 
 .after {
   height: 180px;
-}
-
-.note {
-  margin: 16px 0 0;
 }
 
 .header {
@@ -92,7 +75,7 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #111827;
+  color: var(--text);
   opacity: 0.7;
   transition: opacity 180ms ease;
   &:hover,
@@ -259,3 +242,9 @@
     transition: none;
   }
 }
+
+// Workspace chrome only; scene geometry and animation rules remain above.
+.card { border: 1px solid var(--border); box-shadow: var(--shadow); padding: 16px; }
+.header { justify-content: space-between; gap: 10px; margin-bottom: 6px; h2 { font-size: .95rem; } }
+.card > p { font-size: .75rem; margin-bottom: 12px; }
+.reset { width: 38px; height: 38px; padding: 6px; margin: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 50%; box-shadow: var(--shadow); svg { width: 24px; height: 24px; } }

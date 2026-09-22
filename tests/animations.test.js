@@ -1,3 +1,7 @@
+import { generateScene as buildSceneForTiming } from '../src/utils/generateScene.js'
+import { getParts } from '../src/utils/specialMarkup.js'
+import { motions } from '../src/data/motions.js'
+import { updateAppearance } from '../src/utils/updateAppearance.js'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { presets, customPreset } from '../src/data/presets.js'
@@ -182,4 +186,70 @@ test('text markup is escaped and reverse sequences have descending order', async
   assert.match(html, /&lt;script&gt;/)
   const reverse = specialMarkup(advancedPresets['Sequence Reverse'], {text:'A\nB\nC'}, 'reverse')
   assert.ok(reverse.indexOf('--motion-order: 2') < reverse.indexOf('--motion-order: 0'))
+})
+
+
+test('special motions keep their required type without discarding animation or content edits', () => {
+  for (const [motion, definition] of Object.entries(motions).filter(([, value]) => value.elementType)) {
+    const element = { config: { motion, duration: 1234 }, preset: definition.label,
+      appearance: { type: definition.elementType, text: 'Original' } }
+    const updated = updateAppearance(element, previous => ({ ...previous, type: 'text', text: 'Edited' }))
+    assert.equal(updated.appearance.type, definition.elementType)
+    assert.equal(updated.appearance.text, 'Edited')
+    assert.equal(updated.config, element.config)
+    assert.equal(updated.preset, element.preset)
+  }
+})
+
+test('generic presets and Custom allow changing content type without replacing their motion', () => {
+  for (const preset of [...Object.values(presets), customPreset].filter(value => !motions[value.motion]?.elementType)) {
+    for (const type of ['text', 'image', 'background', 'svg', 'bars', 'segmented', 'gradient', 'sequence']) {
+      const element = { config: preset, appearance: { type: 'text' } }
+      const updated = updateAppearance(element, previous => ({ ...previous, type }))
+      assert.equal(updated.appearance.type, type)
+      assert.equal(updated.config, preset)
+    }
+  }
+})
+
+
+test('repeated staggered groups share a full cycle in preview and export', () => {
+  const appearance = { text: 'One two three four five' }
+  for (const [motion, definition] of Object.entries(motions).filter(([, d]) => d.target === 'parts')) {
+    for (const iterations of [2, 'infinite']) {
+      const c = { ...config, motion, name: 'group', duration: 1000, stagger: 200, iterations }
+      const count = getParts(appearance, definition).length
+      const cycle = 1000 + (count - 1) * 200
+      const css = generateCss(c, '', appearance)
+      const preview = generateCss(c, '[data-animation-preview] ', appearance)
+      assert.ok(css.includes(`group ${cycle}ms`))
+      assert.doesNotMatch(css, /animation-delay: calc/)
+      assert.equal((css.match(/@keyframes/g) || []).length, count)
+      for (let index = 0; index < count; index++) {
+        const order = definition.reverseOrder ? count - 1 - index : index
+        const start = order * 200 / cycle * 100
+        const end = start + 100 * 1000 / cycle
+        const block = css.split(`@keyframes group-part-${index + 1} {`)[1].split('\n}')[0]
+        assert.ok(block.includes(`  ${start}% {`))
+        assert.ok(block.includes(`  ${end}% {`))
+        assert.ok(preview.includes(block))
+        assert.ok(order * 200 + 1000 <= cycle)
+      }
+      assert.match(css, /inView > \.motion-part:nth-child\(n\) \{\s*animation: none;/)
+    }
+  }
+})
+
+test('repeated parts handle zero duration, zero stagger and edited content counts', () => {
+  for (const duration of [0, 1000]) {
+    for (const stagger of [0, 300]) {
+      for (const text of ['one', 'one two three four five six']) {
+        const c = { ...config, motion: 'wordRise', iterations: 2, duration, stagger }
+        const appearance = { type: 'segmented', text }
+        const css = buildSceneForTiming([{ id: 'a', label: 'Text', config: c, appearance }]).css
+        assert.equal((css.match(/@keyframes/g) || []).length, text.split(' ').length)
+        assert.doesNotMatch(css, /NaN|Infinity/)
+      }
+    }
+  }
 })

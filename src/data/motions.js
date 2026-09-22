@@ -31,7 +31,7 @@ export const motions = {
   flipOut: { label: 'Flip Y Out', category: 'Exits', frames: [frame(0), frame(100, { ry: 90, scale: .8, opacity: 0 })] },
 }
 
-export const motionDefaults = { motion: 'basic', intensity: 100, iterations: 1, direction: 'normal', origin: 'center center', stagger: 100 }
+export const motionDefaults = { motion: 'basic', intensity: 100, iterations: 1, direction: 'normal', origin: 'center center', stagger: 100, cyclePause: 0 }
 export const advancedPresets = Object.fromEntries(Object.entries(motions).map(([motion, definition]) => [definition.label, {
   ...motionDefaults, motion, name: motion, category: definition.category,
   fromX: 0, fromY: 0, scaleFrom: 1, rotateFrom: 0,

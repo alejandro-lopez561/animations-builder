@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from './CssOutput.module.scss'
 import shared from '../../styles/shared.module.scss'
-export default function CssOutput({ css, exports: entries, error }) {
+export default function CssOutput({ css, exports: entries, error, open, setOpen }) {
   const [status, setStatus] = useState('')
   const timeout = useRef(null)
   useEffect(() => () => clearTimeout(timeout.current), [])
@@ -11,7 +11,13 @@ export default function CssOutput({ css, exports: entries, error }) {
     catch { setStatus('Could not copy. Select and copy the text below manually.') }
     timeout.current = setTimeout(() => setStatus(''), 3000)
   }
-  return <section className={styles.code_card}>
+  return <section className={styles.code_card} data-open={open} aria-label="CSS export drawer">
+    <div className={styles.drawerBar}>
+      <span className={styles.dot} aria-hidden="true" /><strong>Generated CSS</strong><span className={styles.ready}>{error ? 'Needs attention' : `Ready · ${css.split('\n').length} lines`}</span>
+      <div className={styles.drawerActions}><button type="button" className={shared.button} disabled={!css} onClick={() => copy(css, 'CSS')}>Copy CSS</button><button type="button" className={shared.button} aria-expanded={open} aria-controls="export-code-panel" onClick={() => setOpen(!open)}>{open ? 'Close code' : 'Open code'}</button></div>
+      <span className={styles.barStatus} role="status">{status}</span>
+    </div>
+    <div id="export-code-panel" className={styles.drawerContent} hidden={!open} onKeyDown={event => { if (event.key === 'Escape') { setOpen(false); event.currentTarget.previousElementSibling.querySelector('[aria-controls]').focus() } }}>
     <header className={styles.code_header}>
       <h2 className={styles.code_title}>AEM Export CSS</h2>
     </header>
@@ -21,16 +27,17 @@ export default function CssOutput({ css, exports: entries, error }) {
           <h3>{entry.label} — AEM classes</h3>
           <button type="button" className={shared.button} disabled={!entry.copyClasses} onClick={() => copy(entry.copyClasses, `${entry.label} classes`)}>Copy {entry.label.toLowerCase()} classes</button>
         </div>
+        <p>{entry.compatibility}</p>
         <label className={styles.classLabel}>Classes to apply
           <input className={styles.classInput} readOnly value={entry.classes} placeholder="Custom Animation Class" />
         </label>
         {entry.automatic && <p>Export class: <code>{entry.copyClasses}</code> (automatically assigned).</p>}
-        {entry.markup && <details className={styles.markup}>
-          <summary>Required HTML structure</summary>
-          <p>Keep the motion-part / motion-stroke classes and inline order values. SVG paths require pathLength="100". Use an AEM component that allows this markup.</p>
+        {entry.markup && <section className={styles.markup} aria-label={`${entry.label} required HTML`}>
+          <h3>Required HTML structure</h3>
+          <p>After changing the number or order of parts in AEM, regenerate this CSS. Keep the motion-part / motion-stroke classes and inline order values. SVG paths require pathLength="100". Use an AEM component that allows this markup.</p>
           <button type="button" className={shared.button} onClick={() => copy(entry.markup, `${entry.label} HTML`)}>Copy HTML</button>
           <pre><code>{entry.markup}</code></pre>
-        </details>}
+        </section>}
         <p>{entry.scroll ? 'Use these classes on this element with the existing AEM inView behavior.' : 'This element animates on page load.'}</p>
       </section>)}
       <section className={styles.export_section} aria-label="AEM implementation notes">
@@ -47,7 +54,8 @@ export default function CssOutput({ css, exports: entries, error }) {
         {error && <p role="status">{error}</p>}
         <pre><code>{css || '/* Add an animation name to each enabled element. */'}</code></pre>
       </section>
-      <p className={styles.copy_status} role="status">{status}</p>
+
+    </div>
     </div>
   </section>
 }

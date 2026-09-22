@@ -1,122 +1,13 @@
-.panel {
-  background: white;
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  height: fit-content;
-}
+.panel { height:100%; min-height:0; min-width:0; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden; }
+.heading { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:16px 16px 12px; h2 { font-size:.95rem; margin:0; overflow-wrap:anywhere; } span { font-size:.65rem; color:var(--muted); } }
+.tabs { display:flex; padding:0 12px; border-bottom:1px solid var(--border); flex-shrink:0; button { min-width:0; flex:1; border:0; border-bottom:2px solid transparent; padding:11px 4px; background:transparent; color:var(--muted); font-size:.75rem; } button[aria-selected='true'] { border-color:var(--primary); color:var(--text); font-weight:650; } }
+.body { overflow:auto; min-height:0; padding:16px; flex:1; overscroll-behavior:contain; }
+.controls { display:grid; grid-template-columns:minmax(0,1fr); gap:14px; align-items:start; > * { min-width:0; margin:0; } }
+.fullWidth { grid-column:1 / -1; }
+.textarea { min-height:100px; resize:vertical; }
+.controls input[type='checkbox'] { accent-color:var(--primary); }
+@media (min-width:1600px) { .controls { grid-template-columns:repeat(2,minmax(0,1fr)); } .controls[aria-labelledby$='tab-content'] { grid-template-columns:minmax(0,1fr); } }
 
-.panel_content {
-  margin-bottom: 20px;
-}
-
-.panel_title {
-  margin: 0 0 20px;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #000;
-  line-height: 1.1;
-  text-align: center;
-}
-
-.panel_description {
-  margin: 0;
-  color: #6b7280;
-  line-height: 1.6;
-  text-align: left;
-}
-
-.controls {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 15px;
-  margin: 18px 0;
-  > * {
-    min-width: 0;
-    margin: 0;
-  }
-}
-
-.fullWidth {
-  grid-column: 1 / -1;
-}
-
-.elementControls {
-  margin: 24px 0;
-  padding: 16px;
-  border: 1px solid #dce1e8;
-  border-radius: 12px;
-}
-
-.switcher {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-  button {
-    border: 1px solid #dce1e8;
-    border-radius: 8px;
-    padding: 10px;
-    background: white;
-  }
-  button[aria-pressed='true'] {
-    background: #111827;
-    color: white;
-  }
-}
-
-.editing {
-  font-size: 1.15rem;
-}
-
-// Override composed field margins consistently, regardless of stylesheet order.
-.panel .controls > * {
-  margin: 0;
-  min-width: 0;
-}
-
-.panel .controls {
-  align-items: start;
-}
-
-.panel .controls label {
-  line-height: 20px;
-}
-
-.panel .controls input,
-.panel .controls select {
-  height: 46px;
-  padding: 12px;
-  line-height: 20px;
-}
-
-select,
-.panel .controls select {
-  cursor: pointer;
-}
-
-.switcher {
-  flex-wrap: wrap;
-}
-
-.textarea {
-  min-height: 90px;
-  resize: vertical;
-}
-
-.remove {
-  margin-top: 12px;
-  border: 0;
-  background: transparent;
-  color: #9f1239;
-  padding: 8px 0;
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
-@media (min-width: 601px) and (max-width: 850px), (min-width: 1300px) {
-  .controls {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
+.activation { grid-column: 1 / -1; display: grid; gap: 10px; padding-top: 18px; margin-top: 4px; border-top: 1px solid var(--border); }
+.nameSection { grid-column: 1 / -1; display: grid; gap: 10px; padding: 16px; background: var(--primary-soft); border: 1px solid var(--primary); border-radius: 10px; }
+.replayFooter { grid-column: 1 / -1; padding-top: 20px; margin-top: 6px; border-top: 1px solid var(--border); display: flex; justify-content: flex-start; }

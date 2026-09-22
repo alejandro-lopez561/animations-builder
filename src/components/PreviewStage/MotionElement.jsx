@@ -1,14 +1,13 @@
-import { motions } from '../../data/motions'
-import { getParts, svgPaths } from '../../utils/specialMarkup'
+import { contentDefinition, getParts, svgPaths } from '../../utils/specialMarkup'
 import styles from './PreviewStage.module.scss'
 
 export default function MotionElement({ element, entered }) {
   const { appearance, config, id, label } = element
-  const definition = motions[config.motion] || {}
+  const definition = contentDefinition(config, appearance)
   const variant = definition.variant || appearance.variant || 'words'
   const className = `${styles.target} preview_${id} ${config.trigger === 'scroll' ? `abbv-animation ${entered ? 'inView' : ''}` : ''}`
   if (appearance.type === 'svg') return <svg className={className} viewBox="0 0 100 100" width="180" height="180" role="img" aria-label={`${label} drawing`}>
-    <path className="motion-stroke" pathLength="100" d={svgPaths[variant] || svgPaths.line} fill="none" stroke="currentColor" strokeWidth="4" />
+    <path className="motion-stroke" pathLength="100" d={svgPaths[variant] || svgPaths.line} fill="none" stroke="currentColor" strokeWidth={appearance.strokeWidth || 4} />
   </svg>
   if (['bars', 'sequence', 'segmented'].includes(appearance.type)) {
     const parts = getParts(appearance, { ...definition, variant })

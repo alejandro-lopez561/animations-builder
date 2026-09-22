@@ -20,7 +20,7 @@ Each component owns its Sass Module. Shared UI styles live in src/styles; App.mo
 
 ## Custom animation
 
-The first, selectable preset starts with an empty name and every numeric input at zero, including scale and duration. Choose a duration above zero to see motion. Editing a preset switches the selector to Custom without clearing the edits; choosing Custom explicitly resets its numeric values. The preview reset icon replays the current configuration (or resets the scroll position) without clearing it.
+The first, selectable preset starts with an empty name and every numeric input at zero, including scale and duration. Choose a duration above zero to see motion. Editing a preset retains its name with a modified marker; choosing Custom explicitly resets its numeric values. The preview reset icon replays the current configuration (or resets the scroll position) without clearing it.
 
 All source styles use SCSS, including the unimported client reference. Vite compiles the interface styles; the export generator still returns plain CSS. No Tailwind or external utility-class framework is used.
 
@@ -38,7 +38,7 @@ Automated generator tests cover viewport gating, delay, valid names, shared keyf
 
 ## Multiple elements
 
-Add element creates an independent text element. Every element, including the first, can switch between Text, Image, and Background block. Text starts as Abbvie — Animations Tool and is editable. Content and animation settings survive selection changes and preset changes. Elements can be removed while retaining at least one. Uploaded images remain local in browser memory.
+Add element creates an independent text element. Generic animations allow changing any element type; specialized animations keep the structure they require. Text starts as Abbvie — Animations Tool and is editable. Content and animation settings survive selection changes and preset changes. Elements can be removed while retaining at least one. Uploaded images remain local in browser memory.
 
 Export resolves empty or duplicate names for any number of elements. The generated CSS contains animations and positioning; use existing AEM components for the actual text and images. Relative elements wrap inside the shared scene; absolute elements overlay it. Scroll activation observes entry of the shared block, including tall scenes.
 
@@ -54,10 +54,31 @@ Each element supports relative/absolute position and integer z-index, including 
 
 Repetitions, direction and transform origin apply to every preset. Cycles default to three iterations; infinite is optional. Exit presets intentionally end transparent; reverse/alternate can change the final visible state. Reduced-motion CSS restores visible content and removes transform, filter and clipping. Switching presets resets motion-specific values so advanced effects cannot leak into a basic or Custom animation.
 
-The additional 20 presets cover SVG drawing, bars, segmented text, animated gradients, and group sequences (4 each). Selecting these presets chooses the required element type. Words, lines, letters and sequence items animate with configurable stagger. Enter one item per line for custom sequences or line reveals. Switching to an incompatible element type returns to a basic custom motion.
+The additional 20 presets cover SVG drawing, bars, segmented text, animated gradients, and group sequences (4 each). Selecting these presets chooses the required element type. Words, lines, letters and sequence items animate with configurable stagger. Enter one item per line for custom sequences or line reveals. Presets that require SVG, bars, segmented text, gradients or sequences lock Element type to their required structure, including after timing or name edits. Choose a generic preset or explicitly select Custom to unlock it. Generic animations apply to the complete element and allow changing its type.
 
 Special presets export a Required HTML structure with its own Copy HTML button. Use this structure only in AEM components that permit the relevant tags and inline custom properties; SVG needs inline SVG support. CSS alone cannot segment existing text or create SVG paths. Preview and export share the same structure and timing; no new JavaScript is exported.
 
 ## Editing layout
 
 The editor scrolls independently beside an equally tall preview. AEM export spans the width below both panels. On narrow screens, the preview stays above the scrolling controls. On page load replays immediately after changes. On scroll waits for the shared block to enter the preview viewport: scroll inside the preview to trigger it. Reset and configuration changes restore the initial scroll position for another test. The preview uses the selected activation directly, without a separate test-mode switch.
+
+
+## Project workflow
+
+Projects autosave in localStorage on this browser and origin. Export project JSON for a portable backup, including local image data. Import validates the version and values and backs up the previous scene when storage permits; Restore previous import backup recovers it. Invalid imports leave the scene intact. Storage failures are reported rather than silently treated as saved. A JSON backup is recommended before changing machines or ports. No backend is required.
+
+Elements can be renamed, duplicated and reordered. Filters search the 77 presets by name, family and required element. A modified preset keeps its identity; explicitly selecting Custom resets motion settings. SVG, bars, segmented text, gradients and sequences export their structure even when using a generic motion.
+
+## Timing and appearance
+
+Duration is the motion duration per part. Active group duration is duration + (parts - 1) × stagger. Repeated groups use a shared cycle; Pause per cycle extends its hold. Delay is applied once at the start. Reverse and alternate reverse the timeline, including stagger and holds. The displayed total includes each cycle's hold, including the final one. A pause is ignored for a single repetition.
+
+Number of bars (1–20), SVG stroke width and gradient colors are editable. Sample dimensions/colors may be omitted for existing AEM components. Required structural CSS and gradient stops remain. The preview canvas still supplies layout helpers and typography; it is not a replica of the client stylesheet.
+
+Sequences use one item per line, including a single item; blank content is respected. Letters use grapheme segmentation when available. Changing the number or order of parts after exporting requires regenerating the associated CSS. Internal keyframe names are reserved alongside element names to avoid collisions inside one export; keep names unique across independently exported projects as well.
+
+## Browser and AEM acceptance
+
+Run `npm run dev` and open `/qa.html` for repeatable browser checks against actual exported CSS/HTML without preview styles. Click Run browser checks in Chrome, Firefox, Safari and Edge. See `docs/ACCEPTANCE.md` for the integration checklist and remaining validation. The QA page is a development entry, not included in the normal production build.
+
+The client base reference remains in `src/styles/base.scss`, unchanged and unimported. No reference file was removed.
