@@ -1,4 +1,5 @@
 {
+  "homepage": "https://alejandro-lopez561.github.io/animation-builder",
   "name": "animation-builder",
   "private": true,
   "version": "0.0.0",
@@ -8,9 +9,11 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node --test"
+    "test": "node --test",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
