@@ -57,3 +57,6 @@
 .current { font-size:.7rem; margin:10px 0; }
 .advanced { padding:10px; gap:10px; grid-template-columns: minmax(0,1fr); .field { font-size:.75rem; } }
 @media (max-width:360px) { .results { grid-template-columns:minmax(0,1fr); } }
+
+.filterTitle:first-child { margin-top: 0; }
+.searchLabel { margin-top: 16px; }

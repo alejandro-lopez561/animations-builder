@@ -1,9 +1,10 @@
 import { useId } from 'react'
+import { PropertyLabel } from '../PropertyHint/PropertyHint'
 import styles from '../../styles/shared.module.scss'
-export default function Control({ label, value, onChange, type = 'number', step = '1', min, max, placeholder, describedBy }) {
+export default function Control({ label, value, onChange, type = 'number', step = '1', min, max, placeholder, describedBy, noEffect }) {
   const id = useId()
   return <div className={styles.field}>
-    <label htmlFor={id}>{label}</label>
+    <PropertyLabel htmlFor={id} label={label} reason={noEffect} />
     <input aria-describedby={describedBy} id={id} placeholder={placeholder} className={styles.input} type={type} step={step} min={min} max={max} value={value}
       onChange={event => {
         const raw = event.target.value

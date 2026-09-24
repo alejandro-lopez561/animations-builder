@@ -1,3 +1,5 @@
+import { animationGuide } from '../../data/animationGuide'
+import { presetCategories } from '../../utils/searchPresets'
 import styles from './DocumentationPage.module.scss'
 const sections = [
   ['Introduction', 'Animation Builder lets you configure CSS animations, preview a scene and copy CSS for AEM. The builder uses JavaScript; exported animations use CSS and, for special elements, HTML.'],
@@ -9,5 +11,8 @@ const sections = [
   ['Importing and exporting projects', 'Project contains Import JSON, Export JSON and Restore backup. Projects save locally in this browser and origin. Export JSON for a portable backup. Import replaces the scene and keeps a previous-import backup. New project asks for confirmation and uses that same backup mechanism.'],
 ]
 export default function DocumentationPage() {
-  return <article className={styles.page}><header><p>ANIMATION BUILDER</p><h1>Documentation</h1><p>A practical starting point for creating and exporting animations.</p></header><nav aria-label="Documentation sections">{sections.map(([title],index)=><a key={title} href={`#documentation-${index}`}>{title}</a>)}</nav>{sections.map(([title,body],index)=><section id={`documentation-${index}`} key={title}><h2>{title}</h2><p>{body}</p></section>)}</article>
+  return <article className={styles.page}><header><p>ANIMATION BUILDER</p><h1>Documentation</h1><p>A practical starting point for creating and exporting animations.</p></header><nav aria-label="Documentation sections">{sections.map(([title],index)=><a key={title} href={`#documentation-${index}`}>{title}</a>)}<a href="#documentation-animations">Animation guide</a></nav>{sections.map(([title,body],index)=><section id={`documentation-${index}`} key={title}><h2>{title}</h2><p>{body}</p></section>)}
+    <section id="documentation-animations"><h2>Animation guide</h2><p>Explore all {animationGuide.length} presets. These descriptions explain their default settings; changing controls or playback direction changes the result. Duration controls speed, Delay controls the wait before starting, and Easing changes how the movement accelerates and slows down.</p><p>The ◇ beside a control means it has no visual effect with the current settings. Hover over it or focus it with the keyboard for an explanation. The control stays available for experimentation.</p><nav aria-label="Animation families">{presetCategories.map((category, index) => <a key={category} href={`#documentation-family-${index}`}>{category}</a>)}</nav>
+      {presetCategories.map((category, index) => <section id={`documentation-family-${index}`} key={category}><h3>{category}</h3><div className={styles.catalog}>{animationGuide.filter(entry => entry.category === category).map(entry => <article className={styles.animation} key={entry.name}><h4>{entry.name}</h4><dl><dt>What it does</dt><dd>{entry.description}</dd><dt>Good for</dt><dd>{entry.goodFor}</dd><dt>Main controls</dt><dd>{entry.controls.join(', ')}.</dd></dl>{entry.note && <p>{entry.note}</p>}</article>)}</div></section>)}
+    </section></article>
 }

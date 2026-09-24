@@ -25,13 +25,6 @@ export default function PresetSelector({ value, modified, onChange, onSearchFocu
     return () => window.removeEventListener('keydown', shortcut)
   }, [onSearchFocus])
   return <section className={styles.searchSection} aria-label="Find an animation">
-    <label className={styles.searchLabel} htmlFor={`${id}-search`}>Search animations</label>
-    <div className={styles.searchBox}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg>
-      <input id={`${id}-search`} ref={input} className={styles.searchInput} type="search" placeholder="Search animations by name or effect…" value={filters.query} aria-controls={`${id}-results`} aria-describedby={`${id}-hint`} aria-keyshortcuts="Meta+K Control+K" onChange={event => change('query',event.target.value)} />
-      <button type="button" className={styles.shortcut} title="Focus search (⌘K / Ctrl+K)" aria-label="Focus animation search" onClick={() => input.current?.focus()}>⌘ K</button>
-    </div>
-    <p id={`${id}-hint`} className={styles.hint}>Type to see matching animations. Select a result to preview it.</p>
     <p className={styles.filterTitle}>Quick filters</p>
     <div className={styles.quickRow}>
       <div className={styles.chips} role="group" aria-label="Quick filters">{quickFilters.map(([key,label]) => <button type="button" key={key} className={styles.chip} aria-pressed={filters.quick === key} onClick={() => { setFilters(previous => ({...previous, quick:key, category:'all'})); setLimit(8) }}>{label}</button>)}</div>
@@ -44,6 +37,13 @@ export default function PresetSelector({ value, modified, onChange, onSearchFocu
       <label className={styles.field}>Preset family<select className={styles.input} value={filters.category} onChange={event => change('category',event.target.value)}><option value="all">All families</option>{presetCategories.map(category=><option key={category}>{category}</option>)}</select></label>
       <p className={styles.hint}>Element filters include whole-element animations compatible with that type.</p>
     </div>
+    <label className={styles.searchLabel} htmlFor={`${id}-search`}>Search animations</label>
+    <div className={styles.searchBox}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg>
+      <input id={`${id}-search`} ref={input} className={styles.searchInput} type="search" placeholder="Search animations by name or effect…" value={filters.query} aria-controls={`${id}-results`} aria-describedby={`${id}-hint`} aria-keyshortcuts="Meta+K Control+K" onChange={event => change('query',event.target.value)} />
+      <button type="button" className={styles.shortcut} title="Focus search (⌘K / Ctrl+K)" aria-label="Focus animation search" onClick={() => input.current?.focus()}>⌘ K</button>
+    </div>
+    <p id={`${id}-hint`} className={styles.hint}>Type to see matching animations. Select a result to preview it.</p>
     <div className={styles.resultsHeader}><p role="status" aria-live="polite">{matches.length} {matches.length === 1 ? 'animation found' : 'animations found'}</p><button type="button" className={styles.clear} onClick={clear}>Clear filters</button></div>
     <div className={styles.current}><span>Selected: <strong>{value || 'Custom animation'}{modified ? ' — modified' : ''}</strong></span><button type="button" className={styles.custom} onClick={() => onChange('')}>Custom animation</button></div>
     <ul id={`${id}-results`} className={styles.results} aria-label="Matching animations">

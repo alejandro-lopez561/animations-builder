@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { propertyRelevance } from '../../utils/propertyRelevance'
+import { PropertyLabel, PropertyLegend } from '../PropertyHint/PropertyHint'
 import { timing } from '../../utils/timing'
 import { compatibility } from '../../utils/specialMarkup'
 import { motions } from '../../data/motions'
@@ -21,6 +23,7 @@ export default function BuilderPanel({ config, preset, selectPreset, update, rep
     if (next < 0) return
     event.preventDefault(); setTab(tabs[next]); document.getElementById(`${id}-tab-${tabs[next]}`).focus()
   }
+  const relevance = propertyRelevance(config, appearance)
   const requiredType = motions[config.motion]?.elementType
   const times = timing(config, appearance)
   const definition = motions[config.motion]
@@ -39,7 +42,7 @@ export default function BuilderPanel({ config, preset, selectPreset, update, rep
             <option value="text">Text</option><option value="background">Background block</option><option value="image">Image</option><option value="svg">SVG drawing</option><option value="bars">Bars</option><option value="segmented">Segmented text</option><option value="gradient">Gradient</option><option value="sequence">Sequence</option>
           </select>
         </label>
-        <label className={shared.field}><span><input type="checkbox" checked={config.includeAppearance !== false} onChange={event => update('includeAppearance', event.target.checked)} /> Include sample dimensions and colors in CSS</span></label>
+        <div className={shared.field}><PropertyLabel hintLabel="Include sample dimensions and colors in CSS" reason={relevance.includeAppearance} label={<><input type="checkbox" checked={config.includeAppearance !== false} onChange={event => update('includeAppearance', event.target.checked)} /> Include sample dimensions and colors in CSS</>} /></div>
         <p className={shared.hint}>Disable sample appearance when your AEM component already supplies dimensions and colors. The preview canvas retains its layout helpers.</p>
         <p className={shared.hint}>{compatibility(config, appearance)}{requiredType ? ` — ${definition.label} requires this element type. Choose a generic preset or Custom to unlock it.` : ' — the animation applies to the entire element.'}</p>
         {appearance.type === 'bars' && <Control label="Number of bars" min={1} max={20} value={appearance.barCount || 3} onChange={value => setAppearance(previous => ({ ...previous, barCount: Math.round(value) }))} />}
@@ -66,6 +69,7 @@ export default function BuilderPanel({ config, preset, selectPreset, update, rep
     </label>
     <p className={`${shared.hint} ${styles.fullWidth}`}>{config.trigger === 'scroll' ? 'Uses abbv-animation + inView with the existing AEM viewport behavior.' : 'Starts when the element is rendered. No viewport trigger required.'}</p>
     </section>
+    <PropertyLegend visible={Boolean(relevance.includeAppearance)} />
     </div>
     <div className={styles.controls} role="tabpanel" id={`${id}-panel-animation`} aria-labelledby={`${id}-tab-animation`} hidden={tab !== 'animation'}>
     <div className={styles.fullWidth}><PresetSelector value={preset} modified={modified} onChange={selectPreset} onSearchFocus={() => setTab('animation')} /></div>
@@ -78,7 +82,7 @@ export default function BuilderPanel({ config, preset, selectPreset, update, rep
     </section>
     <Control label="Duration (ms)" value={config.duration} min={0} onChange={value => update('duration', value)} />
     <Control label="Delay (ms)" value={config.delay} min={0} onChange={value => update('delay', value)} />
-    {motions[config.motion]?.target === 'parts' && <Control label="Stagger between items (ms)" value={config.stagger ?? 100} min={0} onChange={value => update('stagger', value)} />}
+    {motions[config.motion]?.target === 'parts' && <Control noEffect={relevance.stagger} label="Stagger between items (ms)" value={config.stagger ?? 100} min={0} onChange={value => update('stagger', value)} />}
     <p className={`${shared.hint} ${styles.fullWidth}`}>Parts: {times.count}. Motion: {times.active} ms. Cycle including pause: {times.cycle} ms. Total including delay: {Number.isFinite(times.total) ? `${times.total} ms` : 'infinite'}. Duration controls each part; stagger separates their starts. Reverse/alternate also reverse the sequence and its holds.</p>
     {(config.iterations === 'infinite' || config.iterations > 1) && <Control label="Pause per cycle (ms)" value={config.cyclePause || 0} min={0} onChange={value => update('cyclePause', value)} />}
     <label className={shared.field}>Repetitions
@@ -86,24 +90,25 @@ export default function BuilderPanel({ config, preset, selectPreset, update, rep
         {[1, 2, 3, 5, 10, 'infinite'].map(value => <option key={value} value={value}>{value}</option>)}
       </select>
     </label>
-    <label className={shared.field}>Direction
-      <select className={shared.input} value={config.direction || 'normal'} onChange={event => update('direction', event.target.value)}>
+    <div className={shared.field}><PropertyLabel label="Direction" htmlFor={`${id}-direction`} reason={relevance.direction} />
+      <select id={`${id}-direction`} className={shared.input} value={config.direction || 'normal'} onChange={event => update('direction', event.target.value)}>
         {['normal', 'reverse', 'alternate', 'alternate-reverse'].map(value => <option key={value}>{value}</option>)}
       </select>
-    </label>
-    <label className={shared.field}>Easing
-      <select className={shared.input} value={config.easing} onChange={event => update('easing', event.target.value)}>
+    </div>
+    <div className={shared.field}><PropertyLabel label="Easing" htmlFor={`${id}-easing`} reason={relevance.easing} />
+      <select id={`${id}-easing`} className={shared.input} value={config.easing} onChange={event => update('easing', event.target.value)}>
         {easings.map(easing => <option key={easing}>{easing}</option>)}
       </select>
-    </label>
+    </div>
+    <PropertyLegend visible={Boolean(relevance.easing || relevance.direction || (definition?.target === 'parts' && relevance.stagger))} />
     <div className={styles.replayFooter}><button type="button" className={shared.primary} onClick={replay}>{config.trigger === 'scroll' ? 'Replay scroll preview' : 'Replay animation'}</button></div>
     </div>
     <div className={styles.controls} role="tabpanel" id={`${id}-panel-advanced`} aria-labelledby={`${id}-tab-advanced`} hidden={tab !== 'advanced'}>
-    {translationUseful && <label className={shared.field}>Distance unit
-      <select className={shared.input} value={config.unit} onChange={event => update('unit', event.target.value)}>
+    {translationUseful && <div className={shared.field}><PropertyLabel label="Distance unit" htmlFor={`${id}-unit`} reason={relevance.unit} />
+      <select id={`${id}-unit`} className={shared.input} value={config.unit} onChange={event => update('unit', event.target.value)}>
         {['px', '%', 'rem'].map(unit => <option key={unit}>{unit}</option>)}
       </select>
-    </label>}
+    </div>}
     <label className={shared.field}>Position
       <select className={shared.input} value={config.position} onChange={event => update('position', event.target.value)}>
         <option value="relative">Relative</option><option value="absolute">Absolute</option>
@@ -119,11 +124,12 @@ export default function BuilderPanel({ config, preset, selectPreset, update, rep
     ].map(([key, label, min, max, step]) => <Control key={key} label={label} value={config[key]} min={min} max={max} step={step} onChange={value => update(key, value)} />)}
     {definition && <p className={`${shared.hint} ${styles.fullWidth}`}>{definition.label}: multi-step keyframes. Intensity adjusts movement, scale, rotation and blur; reveal shapes, drawing progress and gradient paths stay fixed.{definition.category === 'Exits' ? ' This exit ends with the element hidden.' : ''}</p>}
     {intensityUseful && <Control label="Intensity (%)" value={config.intensity ?? 100} min={0} max={200} onChange={value => update('intensity', value)} />}
-    {(!definition || intensityUseful) && <label className={shared.field}>Transform origin
-      <select className={shared.input} value={config.origin || 'center center'} onChange={event => update('origin', event.target.value)}>
+    {(!definition || intensityUseful) && <div className={shared.field}><PropertyLabel label="Transform origin" htmlFor={`${id}-origin`} reason={relevance.origin} />
+      <select id={`${id}-origin`} className={shared.input} value={config.origin || 'center center'} onChange={event => update('origin', event.target.value)}>
         {['center center', 'top center', 'bottom center', 'left center', 'right center'].map(value => <option key={value}>{value}</option>)}
       </select>
-    </label>}
+    </div>}
+    <PropertyLegend visible={Boolean((translationUseful && relevance.unit) || ((!definition || intensityUseful) && relevance.origin))} />
     </div>
     </div>
   </section>

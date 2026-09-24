@@ -1,0 +1,6 @@
+.label { position: relative; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.hint { display: inline-flex; font-weight: 400; }
+.indicator { border: 0; background: transparent; color: var(--muted); font: inherit; padding: 1px 4px; cursor: help; border-radius: 4px; }
+.tooltip { display: none; position: absolute; z-index: 10; top: 100%; left: 0; width: min(240px, 100%); padding: 9px; color: var(--text); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); border-radius: 7px; font-size: .75rem; line-height: 1.5; }
+.hint:not([data-dismissed='true']):hover .tooltip, .hint:not([data-dismissed='true']):focus-within .tooltip { display: block; }
+.legend { grid-column: 1 / -1; font-size: .75rem; line-height: 1.5; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
